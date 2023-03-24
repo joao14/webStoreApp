@@ -24,6 +24,7 @@
     <PackageReference Include="linq2db.PostgreSQL" Version="5.1.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.3" />
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.6" />
+    <PackageReference Include="Dockerfile" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Data\" />
