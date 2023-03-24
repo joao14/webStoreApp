@@ -1,7 +1,23 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Microsoft.EntityFrameworkCore;
+using WebStoreApp.Data;
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("NuevaPolitica", app =>
+    {
+        app.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+}); 
+
+var connectionstring = builder.Configuration.GetConnectionString("PostgreSQLConnection");
+
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionstring));
+
+
 
 var app = builder.Build();
 

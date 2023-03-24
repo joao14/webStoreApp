@@ -7,8 +7,110 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebStoreApp.styles.css" asp-append-version="true" />
+    <script>
+
+        function openModal() {
+            $("#formClient")[0].reset();
+            $('#myModal').modal('show'); 
+        }
+
+        function editClient(data) {
+            $("#formClient")[0].reset();
+            $('#myModal').modal('show');
+            $('#name').val(data.nombre)
+            $('#age').val(data.edad)
+            $('#email').val(data.correo)
+        }
+
+        function updateClient() {
+            $('#myModal').modal('hide');
+
+            var client = new Object();
+            client.Nombre = $('#name').val();
+            client.Edad = $('#age').val();
+            client.Correo = $('#email').val();
+
+            $.ajax({
+                url: '/Client/UpdateClient',
+                type: 'PUT',
+                data: JSON.stringify(client),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",  
+                success: function (data) {
+                    console.log(data)
+                    this.getData()
+                },
+                error: function (error) {
+                    $(that).remove();
+                    DisplayError(error.statusText);
+                }
+            });
+        }
+
+        function deleteClient(data) {
+            $.ajax({
+                url: '/Client/DeleteClient/'+data.id,
+                type: 'DELETE',
+                success: function (data) {
+                    console.log(data)
+                    this.getData()
+                },
+                error: function (error) {
+                    $(that).remove();
+                    DisplayError(error.statusText);
+                }
+            });
+        }
+
+        function addClient() {
+            $('#myModal').modal('hide');
+            var client = new Object();
+            client.Nombre = $('#name').val();
+            client.Edad = $('#age').val();
+            client.Correo = $('#email').val();
+
+            if (client != null) {
+                $.ajax({
+                    url: '/Client/CreateClient',
+                    type: 'POST',
+                    data: JSON.stringify(client),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",  
+                    success: function (data) {
+                        console.log(data)
+                        this.getData()
+                    },
+                    error: function (error) {
+                        console.log(error)
+                        $(that).remove();
+                        DisplayError(error.statusText);
+                    }
+                });
+            }
+        }
+
+        function getData() {
+            $.ajax({
+                url: '/Client/GetAllClients',
+                type: 'GET',
+                success: function (data) {
+                    console.log(data)
+                    var trHTML = '';
+                    jQuery.each(data, function (index, item) {
+                        trHTML += '<tr><td>' + item.nombre + '</td><td>' + item.edad + '</td><td>' + item.correo + '</td><td><button type=\'button\' class=\'btn btn-warning\' onclick=\'editClient(' + JSON.stringify(item) + ')\'>Editar</button><button type=\'button\' class=\'btn btn-danger\' onclick=\'deleteClient(' + JSON.stringify(item) +')\'>Editar</button></td></tr>';
+                    });
+                    $('#tblClients tbody').append(trHTML);
+                    
+                },
+                error: function (error) {
+                    $(that).remove();
+                    DisplayError(error.statusText);
+                }
+            });
+        }
+    </script>
 </head>
-<body>
+<body onload="getData()">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -20,10 +122,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Clients">Clients</a>
                         </li>
                     </ul>
                 </div>
